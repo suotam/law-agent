@@ -1,0 +1,4 @@
+{
+  "recommendations": ["ms-python.python", "ms-python.vscode-pylance", "ms-python.vscode-python-envs", "charliermarsh.ruff", "tamasfe.even-better-toml"],
+  "unwantedRecommendations": ["ms-python.black-formatter", "ms-python.isort", "ms-python.flake8"]
+}

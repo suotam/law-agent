@@ -1,0 +1,94 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: law-agent-qdrant
+    restart: unless-stopped
+    expose:
+      - "6333"
+      - "6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    networks:
+      - internal
+
+  postgres:
+    image: postgres:17
+    container_name: law-agent-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: law_agent
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env.prod}
+      POSTGRES_DB: law_agent
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U law_agent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - internal
+
+  docling:
+    build: ./docker/docling
+    container_name: law-agent-docling
+    restart: unless-stopped
+    environment:
+      DOCLING_SERVE_ENABLE_UI: "false"
+      DOCLING_SERVE_MAX_SYNC_WAIT: "600"
+    expose:
+      - "5001"
+    volumes:
+      - docling_models:/opt/app-root/src/.cache/docling/models
+    networks:
+      - internal
+
+  api:
+    build: ./backend
+    container_name: law-agent-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.prod
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql+psycopg://law_agent:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env.prod}@postgres:5432/law_agent
+      QDRANT_URL: http://qdrant:6333
+      DOCLING_URL: http://docling:5001
+    volumes:
+      - blob_data:/app/data/blobs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      docling:
+        condition: service_started
+    networks:
+      - internal
+      - default
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_BACKEND_API_URL: ${VITE_BACKEND_API_URL:?VITE_BACKEND_API_URL must be set in .env.prod}
+    container_name: law-agent-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - default
+
+networks:
+  internal:
+    internal: true
+
+volumes:
+  qdrant_storage:
+  docling_models:
+  postgres_data:
+  blob_data:

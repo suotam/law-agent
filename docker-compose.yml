@@ -1,0 +1,57 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: law-agent-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333" # HTTP API + dashboard (http://localhost:6333/dashboard)
+      - "6334:6334" # gRPC API
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+  postgres:
+    image: postgres:17
+    container_name: law-agent-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: law_agent
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env.prod}
+      POSTGRES_DB: law_agent
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U law_agent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  pgweb:
+    image: sosedoff/pgweb:latest
+    container_name: law-agent-pgweb
+    restart: unless-stopped
+    ports:
+      - "8081:8081" # web UI (http://localhost:8081)
+    environment:
+      PGWEB_DATABASE_URL: postgres://law_agent:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env.prod}@postgres:5432/law_agent?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  docling:
+    build: ./docker/docling
+    container_name: law-agent-docling
+    restart: unless-stopped
+    ports:
+      - "5001:5001" # HTTP API + Gradio UI (http://localhost:5001/ui)
+    environment:
+      DOCLING_SERVE_ENABLE_UI: "true"
+      DOCLING_SERVE_MAX_SYNC_WAIT: "600"
+    volumes:
+      - docling_models:/opt/app-root/src/.cache/docling/models
+
+volumes:
+  qdrant_storage:
+  docling_models:
+  postgres_data:

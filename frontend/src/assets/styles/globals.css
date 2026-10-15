@@ -1,0 +1,190 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Layer 1 — primitives. Raw values with no meaning attached.
+ * Never referenced from JSX or from a Tailwind class; only layers 2 and 3 read these.
+ */
+:root {
+  --navy-900: oklch(0.22 0.045 250);
+  --navy-800: oklch(0.28 0.05 250);
+  --navy-700: oklch(0.36 0.05 250);
+  --navy-100: oklch(0.93 0.015 250);
+
+  --slate-50: oklch(0.985 0.002 250);
+  --slate-100: oklch(0.965 0.004 250);
+  --slate-200: oklch(0.925 0.006 250);
+  --slate-300: oklch(0.87 0.008 250);
+  --slate-500: oklch(0.62 0.012 250);
+  --slate-700: oklch(0.42 0.015 250);
+  --slate-900: oklch(0.21 0.02 250);
+
+  --amber-500: oklch(0.78 0.15 78);
+  --amber-050: oklch(0.97 0.03 88);
+  --red-600: oklch(0.58 0.21 27);
+
+  --white: oklch(1 0 0);
+  --radius-base: 0.625rem;
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: "Inter Variable", sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-chat-user-bubble: var(--chat-user-bubble);
+  --color-chat-user-bubble-foreground: var(--chat-user-bubble-foreground);
+  --color-chat-assistant-bg: var(--chat-assistant-bg);
+  --color-citation-fg: var(--citation-fg);
+  --color-citation-marker-bg: var(--citation-marker-bg);
+  --color-source-chip-active-bg: var(--source-chip-active-bg);
+  --color-source-chip-active-fg: var(--source-chip-active-fg);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Layer 2 — semantic. The shadcn contract, filled from layer 1. */
+:root {
+  --background: var(--white);
+  --foreground: var(--slate-900);
+  --card: var(--white);
+  --card-foreground: var(--slate-900);
+  --popover: var(--white);
+  --popover-foreground: var(--slate-900);
+  --primary: var(--navy-800);
+  --primary-foreground: var(--slate-50);
+  --secondary: var(--slate-100);
+  --secondary-foreground: var(--slate-900);
+  --muted: var(--slate-100);
+  --muted-foreground: var(--slate-500);
+  --accent: var(--navy-100);
+  --accent-foreground: var(--navy-900);
+  --destructive: var(--red-600);
+  --warning: var(--amber-500);
+  --warning-foreground: var(--slate-900);
+  --border: var(--slate-200);
+  --input: var(--slate-300);
+  --ring: var(--navy-700);
+  --chart-1: var(--navy-800);
+  --chart-2: var(--navy-700);
+  --chart-3: var(--slate-500);
+  --chart-4: var(--slate-300);
+  --chart-5: var(--amber-500);
+  --radius: var(--radius-base);
+
+  /* Layer 3 — component. Places with their own visual identity. */
+  --sidebar: var(--navy-900);
+  --sidebar-foreground: var(--slate-100);
+  --sidebar-primary: var(--white);
+  --sidebar-primary-foreground: var(--navy-900);
+  --sidebar-accent: var(--navy-700);
+  --sidebar-accent-foreground: var(--white);
+  --sidebar-border: var(--navy-700);
+  --sidebar-ring: var(--navy-100);
+
+  --chat-user-bubble: var(--navy-800);
+  --chat-user-bubble-foreground: var(--slate-50);
+  --chat-assistant-bg: var(--white);
+  --citation-fg: var(--navy-700);
+  --citation-marker-bg: var(--navy-100);
+  --source-chip-active-bg: var(--navy-800);
+  --source-chip-active-fg: var(--slate-50);
+}
+
+/* Dark mode is not built yet; the block exists so adding it later is a palette rewrite. */
+.dark {
+  --background: var(--navy-900);
+  --foreground: var(--slate-100);
+  --card: var(--navy-800);
+  --card-foreground: var(--slate-100);
+  --popover: var(--navy-800);
+  --popover-foreground: var(--slate-100);
+  --primary: var(--slate-100);
+  --primary-foreground: var(--navy-900);
+  --secondary: var(--navy-700);
+  --secondary-foreground: var(--slate-100);
+  --muted: var(--navy-700);
+  --muted-foreground: var(--slate-300);
+  --accent: var(--navy-700);
+  --accent-foreground: var(--white);
+  --destructive: var(--red-600);
+  --warning: var(--amber-500);
+  --warning-foreground: var(--navy-900);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: var(--navy-100);
+  --chart-1: var(--slate-100);
+  --chart-2: var(--slate-300);
+  --chart-3: var(--slate-500);
+  --chart-4: var(--navy-700);
+  --chart-5: var(--amber-500);
+
+  --sidebar: var(--navy-900);
+  --sidebar-foreground: var(--slate-100);
+  --sidebar-primary: var(--white);
+  --sidebar-primary-foreground: var(--navy-900);
+  --sidebar-accent: var(--navy-700);
+  --sidebar-accent-foreground: var(--white);
+  --sidebar-border: var(--navy-700);
+  --sidebar-ring: var(--navy-100);
+
+  --chat-user-bubble: var(--navy-700);
+  --chat-user-bubble-foreground: var(--slate-50);
+  --chat-assistant-bg: var(--navy-800);
+  --citation-fg: var(--navy-100);
+  --citation-marker-bg: var(--navy-700);
+  --source-chip-active-bg: var(--slate-100);
+  --source-chip-active-fg: var(--navy-900);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
